@@ -1,44 +1,27 @@
+// src/App.js
 import React from 'react';
-import { useParams } from 'react-router-dom';
-import { stickerDictionaries } from './stickers';
+import { stickerDictionaries } from './stickers'; // Import the sticker data
 
-const AlbumPage = () => {
-    const { phoneNumber } = useParams();
-    const [stickers, setStickers] = React.useState([]);
+const specificSticker = 'Epic | Poisoned Idan'; // Change this to the specific sticker you want to display
+const specificRarity = 'Epic'; // Change this to the specific rarity of the sticker
 
-    React.useEffect(() => {
-        // Fetch the user's sticker collection
-        base('Stickers')
-            .select({
-                filterByFormula: `{PhoneNumber} = "${phoneNumber}"`,
-            })
-            .firstPage()
-            .then(records => {
-                // Map sticker names to URLs
-                const stickerData = records.map(record => {
-                    const { Rarity, Name } = record.fields;
-                    const url = stickerDictionaries[Rarity]?.[Name];
-                    return url ? { url, fileName: Name } : null;
-                }).filter(Boolean);
-
-                setStickers(stickerData);
-            })
-            .catch(error => console.error('Error fetching stickers:', error));
-    }, [phoneNumber]);
+const App = () => {
+    // Fetch the URL of the specific sticker
+    const stickerUrl = stickerDictionaries[specificRarity]?.[specificSticker];
 
     return (
         <div>
-            <h1>Your Sticker Album</h1>
-            <div>
-                {stickers.map(sticker => (
-                    <div key={sticker.fileName}>
-                        <img src={sticker.url} alt={sticker.fileName} />
-                        <p>{sticker.fileName}</p>
-                    </div>
-                ))}
-            </div>
+            <h1>Specific Sticker</h1>
+            {stickerUrl ? (
+                <div>
+                    <img src={stickerUrl} alt={specificSticker} style={{ width: '200px', height: '200px' }} />
+                    <p>{specificSticker}</p>
+                </div>
+            ) : (
+                <p>Sticker not found</p>
+            )}
         </div>
     );
 };
 
-export default AlbumPage;
+export default App;
